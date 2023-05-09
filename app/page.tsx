@@ -9,6 +9,12 @@ interface Pokemon {
   url: string;
 }
 
+interface PokemonWithType {
+  name: string;
+  url: string;
+  type: string;
+}
+
 export default function Page() {
   const PAGE_SIZE = 12;
   const [currentPage, setCurrentPage] = useState(1);
@@ -26,16 +32,23 @@ export default function Page() {
     const fetchPokemons = async () => {
       if (filter.length) {
         const typePromises = filter.map((type) => fetchPokemonByType(type));
-        const allPokemonByType = await Promise.all(typePromises);
-        const mergedAndUnique = Array.from(
-          new Set(allPokemonByType.flat().map((poke) => poke.url))
-        ).map((url) =>
-          allPokemonByType.flat().find((poke) => poke.url === url)
+        const allPokemonByType: PokemonWithType[][] = await Promise.all(
+          typePromises
         );
 
-        setTotalPages(Math.ceil(mergedAndUnique.length / PAGE_SIZE));
+        const intersection: PokemonWithType[] = allPokemonByType.reduce(
+          (accumulator: PokemonWithType[], current: PokemonWithType[]) => {
+            return accumulator.filter((poke: PokemonWithType) =>
+              current.some(
+                (innerPoke: PokemonWithType) => innerPoke.url === poke.url
+              )
+            );
+          }
+        );
+
+        setTotalPages(Math.ceil(intersection.length / PAGE_SIZE));
         setPokemons(
-          mergedAndUnique.slice(
+          intersection.slice(
             (currentPage - 1) * PAGE_SIZE,
             currentPage * PAGE_SIZE
           )
@@ -54,6 +67,10 @@ export default function Page() {
 
     fetchPokemons();
   }, [currentPage, filter]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filter]);
 
   return (
     <div className="container mx-auto px-4">
