@@ -27,20 +27,23 @@ const Pagination: React.FC<PaginationProps> = ({
         >
           First
         </button>
-        <button
-          disabled={currentPage === 1}
-          onClick={() => handleClick(currentPage - 1)}
-          className="btn btn-primary text-white bg-blue-500 px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-        >
-          Previous
-        </button>
-        <button
-          disabled={currentPage === totalPages}
-          onClick={() => handleClick(currentPage + 1)}
-          className="btn btn-primary text-white bg-blue-500 px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-        >
-          Next
-        </button>
+        {currentPage > 1 && (
+          <button
+            onClick={() => handleClick(currentPage - 1)}
+            className="btn btn-primary text-white bg-blue-500 px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+          >
+            Previous
+          </button>
+        )}
+        {currentPage < totalPages && (
+          <button
+            onClick={() => handleClick(currentPage + 1)}
+            className="btn btn-primary text-white bg-blue-500 px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+          >
+            Next
+          </button>
+        )}
+
         <button
           disabled={currentPage === totalPages}
           onClick={() => handleClick(totalPages)}
