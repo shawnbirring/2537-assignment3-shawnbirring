@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import PokeCard from "../components/PokeCard";
 import Pagination from "../components/Pagination";
 import Filter from "../components/Filter";
+import fetchTotalCount from "../utils/fetchTotalCount";
 
 interface Pokemon {
   name: string;
@@ -20,8 +21,18 @@ export default function Page() {
   const [currentPage, setCurrentPage] = useState(1);
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
   const [filter, setFilter] = useState<string[]>([]);
-  const [totalPages, setTotalPages] = useState(Math.ceil(1118 / PAGE_SIZE));
+  const [totalCount, setTotalCount] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
   const [totalFilteredPokemon, setTotalFilteredPokemon] = useState(0);
+
+  useEffect(() => {
+    (async () => {
+      const count = await fetchTotalCount();
+      setTotalCount(count);
+      const count2 = await fetchTotalCount();
+      setTotalPages(Math.ceil(count2 / PAGE_SIZE));
+    })();
+  }, []);
 
   const fetchPokemonByType = async (type: string) => {
     const response = await fetch(`https://pokeapi.co/api/v2/type/${type}`);
@@ -61,7 +72,7 @@ export default function Page() {
           }&limit=${PAGE_SIZE}`
         );
         const data = await response.json();
-        setTotalPages(Math.ceil(1118 / PAGE_SIZE));
+        setTotalPages(Math.ceil(totalCount / PAGE_SIZE));
         setPokemons(data.results);
       }
     };
@@ -75,24 +86,35 @@ export default function Page() {
 
   return (
     <div className="container mx-auto px-4">
-      <Filter setFilter={setFilter} filter={[]} />
+      <Filter setFilter={setFilter} filter={filter} />
       <div className="text-center mb-4">
-        {filter.length > 0 ? (
-          <>
-            Filtered Pokémon: {totalFilteredPokemon}
-            <br />
-            Showing {PAGE_SIZE * (currentPage - 1) + 1} -{" "}
-            {Math.min(
-              PAGE_SIZE * (currentPage - 1) + pokemons.length,
-              totalFilteredPokemon
-            )}
-          </>
+        {pokemons.length > 0 ? (
+          filter.length > 0 ? (
+            <>
+              Filtered Pokémon: {totalFilteredPokemon}
+              <br />
+              Showing {PAGE_SIZE * (currentPage - 1) + 1} -{" "}
+              {Math.min(
+                PAGE_SIZE * (currentPage - 1) + pokemons.length,
+                totalFilteredPokemon
+              )}
+            </>
+          ) : (
+            <>
+              Total Pokémon: {totalCount}
+              <br />
+              Showing {PAGE_SIZE * (currentPage - 1) + 1} -{" "}
+              {Math.min(
+                PAGE_SIZE * (currentPage - 1) + pokemons.length,
+                totalCount
+              )}
+            </>
+          )
         ) : (
           <>
-            Total Pokémon: {totalPages * PAGE_SIZE}
+            {filter.length > 0 ? "Filtered Pokémon: 0" : "Total Pokémon: 0"}
             <br />
-            Showing {PAGE_SIZE * (currentPage - 1) + 1} -{" "}
-            {Math.min(PAGE_SIZE * currentPage, totalPages * PAGE_SIZE)}
+            Showing 0-0
           </>
         )}
       </div>
