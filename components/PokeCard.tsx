@@ -49,7 +49,10 @@ const PokeCard: React.FC<PokeCardProps> = ({ pokemon, filter }) => {
     <div className="pokeCard bg-white p-4 rounded shadow">
       <Typography variant="h5">{pokemon.name.toUpperCase()}</Typography>
       <img
-        src={pokemonData?.sprites.front_default || "/placeholder.png"}
+        src={
+          pokemonData?.sprites.front_default ||
+          "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/25.png"
+        }
         alt={pokemon.name}
         width={96}
         height={96}
