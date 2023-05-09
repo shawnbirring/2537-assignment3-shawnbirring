@@ -13,19 +13,53 @@ const Pagination: React.FC<PaginationProps> = ({
     setCurrentPage(page);
   };
 
+  const maxButtons = 5;
+  const startPage = Math.max(1, currentPage - Math.floor(maxButtons / 2));
+  const endPage = Math.min(totalPages, startPage + maxButtons - 1);
+
   return (
-    <div className="pagination flex justify-center mt-4">
-      {Array.from({ length: totalPages }, (_, index) => (
+    <div className="pagination flex justify-center mt-4 space-x-1">
+      <button
+        disabled={currentPage === 1}
+        onClick={() => handleClick(1)}
+        className="btn btn-primary text-white bg-blue-500 px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+      >
+        First
+      </button>
+      <button
+        disabled={currentPage === 1}
+        onClick={() => handleClick(currentPage - 1)}
+        className="btn btn-primary text-white bg-blue-500 px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+      >
+        Previous
+      </button>
+      {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
         <button
           key={index}
-          className={`btn btn-primary mx-1 ${
-            currentPage === index + 1 ? "bg-blue-700" : ""
-          }`}
-          onClick={() => handleClick(index + 1)}
+          className={`btn btn-primary text-white px-4 py-2 rounded-md ${
+            currentPage === startPage + index
+              ? "bg-blue-700"
+              : "bg-blue-500 hover:bg-blue-600"
+          } focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
+          onClick={() => handleClick(startPage + index)}
         >
-          {index + 1}
+          {startPage + index}
         </button>
       ))}
+      <button
+        disabled={currentPage === totalPages}
+        onClick={() => handleClick(currentPage + 1)}
+        className="btn btn-primary text-white bg-blue-500 px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+      >
+        Next
+      </button>
+      <button
+        disabled={currentPage === totalPages}
+        onClick={() => handleClick(totalPages)}
+        className="btn btn-primary text-white bg-blue-500 px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+      >
+        Last
+      </button>
     </div>
   );
 };

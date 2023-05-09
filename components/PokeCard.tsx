@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogTitle, DialogContent, Typography } from "@mui/material";
 
 interface Pokemon {
@@ -8,26 +8,42 @@ interface Pokemon {
 
 interface PokeCardProps {
   pokemon: Pokemon;
+  filter: string[];
 }
 
-const PokeCard: React.FC<PokeCardProps> = ({ pokemon }) => {
+const PokeCard: React.FC<PokeCardProps> = ({ pokemon, filter }) => {
   const [open, setOpen] = useState(false);
   const [pokemonData, setPokemonData] = useState<any>(null);
+  const [displayCard, setDisplayCard] = useState(true);
 
-  const handleClickOpen = async () => {
-    try {
-      const res = await fetch(pokemon.url);
-      const data = await res.json();
-      setPokemonData(data);
-      setOpen(true);
-    } catch (error) {
-      console.error("Error fetching Pokémon data:", error);
-    }
-  };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch(pokemon.url);
+        const data = await res.json();
+        setPokemonData(data);
+        if (filter.length > 0) {
+          const hasAllTypes = filter.every((type) =>
+            data.types.some((t: any) => t.type.name === type)
+          );
+          setDisplayCard(hasAllTypes);
+        } else {
+          setDisplayCard(true);
+        }
+      } catch (error) {
+        console.error("Error fetching Pokémon data:", error);
+      }
+    };
+    fetchData();
+  }, [pokemon.url, filter]);
 
   const handleClose = () => {
     setOpen(false);
   };
+
+  if (!displayCard) {
+    return null;
+  }
 
   return (
     <div className="pokeCard bg-white p-4 rounded shadow">
@@ -37,8 +53,9 @@ const PokeCard: React.FC<PokeCardProps> = ({ pokemon }) => {
         alt={pokemon.name}
         width={96}
         height={96}
+        className="mb-2"
       />
-      <button className="btn btn-primary mt-2" onClick={handleClickOpen}>
+      <button className="btn btn-primary mt-2" onClick={() => setOpen(true)}>
         More
       </button>
       {pokemonData && (
