@@ -10,7 +10,7 @@ interface Pokemon {
 }
 
 export default function Page() {
-  const PAGE_SIZE = 10;
+  const PAGE_SIZE = 12;
   const [currentPage, setCurrentPage] = useState(1);
   const [pokemons, setPokemons] = useState<Pokemon[]>([]);
   const [filter, setFilter] = useState<string[]>([]);
@@ -55,15 +55,9 @@ export default function Page() {
     fetchPokemons();
   }, [currentPage, filter]);
 
-  const getPokemonTypes = async (url: string) => {
-    const res = await fetch(url);
-    const data = await res.json();
-    return data.types.map((t: any) => t.type.name);
-  };
-
   return (
     <div className="container mx-auto px-4">
-      <Filter setFilter={setFilter} />
+      <Filter setFilter={setFilter} filter={[]} />
       <div className="pokeCards grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {pokemons.map((pokemon) => (
           <PokeCard key={pokemon.name} pokemon={pokemon} filter={filter} />

@@ -36,10 +36,10 @@ const Pagination: React.FC<PaginationProps> = ({
       {Array.from({ length: endPage - startPage + 1 }, (_, index) => (
         <button
           key={index}
-          className={`btn btn-primary text-white px-4 py-2 rounded-md ${
+          className={`btn btn-primary px-4 py-2 rounded-md ${
             currentPage === startPage + index
-              ? "bg-blue-700"
-              : "bg-blue-500 hover:bg-blue-600"
+              ? "bg-blue-700 text-white"
+              : "bg-gray-200 hover:bg-gray-300 text-gray-800"
           } focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
           onClick={() => handleClick(startPage + index)}
         >

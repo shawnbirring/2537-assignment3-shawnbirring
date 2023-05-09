@@ -1,6 +1,9 @@
-import { Chip } from "@mui/material";
 import { useState } from "react";
 
+interface FilterProps {
+  filter: string[];
+  setFilter: (filter: string[]) => void;
+}
 const types = [
   "water",
   "grass",
@@ -22,10 +25,6 @@ const types = [
   "steel",
 ];
 
-interface FilterProps {
-  setFilter: (filter: string[]) => void;
-}
-
 const Filter: React.FC<FilterProps> = ({ setFilter }) => {
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
 
@@ -41,14 +40,17 @@ const Filter: React.FC<FilterProps> = ({ setFilter }) => {
   return (
     <div className="flex flex-wrap justify-center my-4">
       {types.map((type) => (
-        <Chip
+        <button
           key={type}
-          label={type.toUpperCase()}
           onClick={() => toggleType(type)}
-          className={`mx-1 my-1 ${
-            selectedTypes.includes(type) ? "bg-blue-500 text-white" : ""
-          }`}
-        />
+          className={`mx-1 my-1 px-2 py-1 rounded ${
+            selectedTypes.includes(type)
+              ? "bg-blue-500 text-white"
+              : "bg-gray-200 text-gray-800"
+          } hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
+        >
+          {type.toUpperCase()}
+        </button>
       ))}
     </div>
   );
